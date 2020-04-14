@@ -1,4 +1,4 @@
-package com.github.aymanizz.ktor_i18n
+package com.github.aymanizz.ktori18n
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*

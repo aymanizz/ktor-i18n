@@ -1,4 +1,4 @@
-package com.github.aymanizz.ktor_i18n
+package com.github.aymanizz.ktori18n
 
 import java.io.InputStream
 import java.io.InputStreamReader

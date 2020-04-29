@@ -2,6 +2,21 @@
 
 Internationalization support for Ktor framework.
 
+### Add The Dependency
+
+add the dependency to your gradle build file:
+
+```groovy
+repositories {
+    jcenter()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    implementation 'com.github.aymanizz:ktor-i18n:1.0.0'
+}
+```
+
 ### Contribution
 
 #### Issues

@@ -1,5 +1,7 @@
 ## Ktor I18n
 
+[![](https://jitpack.io/v/aymanizz/ktor-i18n.svg)](https://jitpack.io/#aymanizz/ktor-i18n)
+
 Internationalization support for Ktor framework.
 
 ### Add The Dependency

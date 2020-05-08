@@ -1,7 +1,8 @@
 ## Ktor I18n
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![](https://jitpack.io/v/aymanizz/ktor-i18n.svg)](https://jitpack.io/#aymanizz/ktor-i18n)
+[![Latest Version](https://jitpack.io/v/aymanizz/ktor-i18n.svg)](https://jitpack.io/#aymanizz/ktor-i18n)
+![CI](https://github.com/aymanizz/ktor-i18n/workflows/CI/badge.svg?branch=master&event=push)
 
 Internationalization support for Ktor framework.
 

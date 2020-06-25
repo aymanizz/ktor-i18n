@@ -11,7 +11,6 @@ import io.ktor.http.Cookie
 import io.ktor.request.acceptLanguage
 import io.ktor.response.respondRedirect
 import io.ktor.util.AttributeKey
-import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
 import java.util.*
 
@@ -31,7 +30,6 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
     val useOfRedirection = configuration.useOfRedirection
     val supportedPathPrefixes = "(${supportedLocales.joinToString("|", transform = { it.language })})".toRegex()
 
-    @KtorExperimentalAPI
     val excludePredicates: List<(ApplicationCall) -> Boolean> = configuration.excludePredicates.toList()
 
     init {
@@ -49,7 +47,6 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
      *
      * [messageResolver] instance of MessageResolver used in message resolution. Defaults to
      * [ResourceBundleMessageResolver].
-     * @see MessageResolver
      *
      * [useOfCookie] Whether to use cookie or not to resolve [Locale]
      * [cookieName] A sensible naming of the cookie
@@ -59,6 +56,7 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
      * [excludePredicates] The list of call predicates for redirect exclusion.
      * Any call matching any of the predicates will not be redirected by this feature.
      *
+     * @see MessageResolver
      */
     class Configuration {
 
@@ -71,13 +69,11 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
 
         var useOfRedirection: Boolean = false
 
-        @KtorExperimentalAPI
         val excludePredicates: MutableList<(ApplicationCall) -> Boolean> = ArrayList()
 
         /**
          * Exclude calls with paths matching the [pathPrefixes] from being redirected with language prefix by this feature.
          */
-        @KtorExperimentalAPI
         fun excludePrefixes(vararg pathPrefixes: String) {
             pathPrefixes.forEach { prefix ->
                 exclude { call -> call.request.origin.uri.startsWith(prefix) }
@@ -88,13 +84,11 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
          * Exclude calls matching the [predicate] from being redirected with language prefix by this feature.
          * @see io.ktor.features.HttpsRedirect for example of exclusions
          */
-        @KtorExperimentalAPI
         fun exclude(predicate: (call: ApplicationCall) -> Boolean) {
             excludePredicates.add(predicate)
         }
     }
 
-    @KtorExperimentalAPI
     private suspend fun intercept(ctx: PipelineContext<Unit, ApplicationCall>) {
         val call = ctx.context
         val language = call.locale.language
@@ -111,7 +105,6 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
         }
     }
 
-    @KtorExperimentalAPI
     companion object Feature : ApplicationFeature<ApplicationCallPipeline, Configuration, I18n> {
 
         override val key = AttributeKey<I18n>("I18n")
@@ -135,7 +128,6 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
     }
 }
 
-@KtorExperimentalAPI
 val Application.i18n
     get() = feature(I18n)
 
@@ -147,7 +139,6 @@ private val CallLocaleKey = AttributeKey<Locale>("CallLocale")
  *
  * If there is no supported locale that matches the request accept language locales, the the default locale is returned.
  */
-@KtorExperimentalAPI
 val ApplicationCall.locale
     get() = attributes.computeIfAbsent(CallLocaleKey) {
         val i18n = application.i18n
@@ -189,6 +180,5 @@ val ApplicationCall.locale
 /**
  * Helper function for resolving a message using the call locale as returned from [ApplicationCall.locale].
  */
-@KtorExperimentalAPI
 fun ApplicationCall.t(keys: Iterable<String>, vararg args: Any = arrayOf()) =
     application.i18n.t(locale, keys, *args)

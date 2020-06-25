@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm") version "1.3.70"
     maven
     id("org.jetbrains.dokka") version "0.10.1"
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
 }
 
 group = "com.github.aymanizz"
@@ -17,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-core:1.3.1")
     testImplementation("io.ktor:ktor-server-test-host:1.3.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
@@ -29,6 +30,11 @@ tasks.withType<KotlinCompile>().configureEach {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+ktlint {
+    version.set("0.37.2")
+    enableExperimentalRules.set(true)
 }
 
 tasks {

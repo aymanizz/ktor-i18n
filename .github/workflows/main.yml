@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-test-lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,5 +23,5 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
 
-    - name: Build and test with Gradle
-      run: ./gradlew build
+    - name: Build, test and lint with Gradle
+      run: ./gradlew --continue build ktlintCheck

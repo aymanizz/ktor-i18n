@@ -140,41 +140,45 @@ private val CallLocaleKey = AttributeKey<Locale>("CallLocale")
  * If there is no supported locale that matches the request accept language locales, the the default locale is returned.
  */
 val ApplicationCall.locale
-    get() = attributes.computeIfAbsent(CallLocaleKey) {
+    get() = attributes.computeIfAbsent(CallLocaleKey) locale@{
         val i18n = application.i18n
 
-        fun createCooke(locale: Locale) {
+        fun writeCookie(locale: Locale) {
             response.cookies.append(Cookie(i18n.localeCookieName, locale.language, maxAge = 60 * 60))
         }
 
-        // check header first
-        val acceptLocales = request.acceptLanguage()
-        val ranges = if (acceptLocales != null) Locale.LanguageRange.parse(acceptLocales) else listOf()
-        var locale = Locale.filter(ranges, i18n.supportedLocales).firstOrNull()
-            ?: Locale.lookup(ranges, i18n.supportedLocales)
-            ?: i18n.defaultLocale
-
-        var localeCookie: String? = null
-        if (i18n.useOfCookie) {
-            // cookie always overrides the accept language header
-            localeCookie = request.cookies[i18n.localeCookieName]
-            localeCookie?.let { locale = Locale.forLanguageTag(it) }
+        fun readCookie(): String? {
+            return request.cookies[i18n.localeCookieName]
         }
 
         if (i18n.useOfRedirection) {
-            // URI language prefix always overrides cookie resolving
-            // todo: maybe using regex would be faster and simpler than working w/ lists
             val uri = request.origin.uri.trimStart('/').trimEnd('/').split('/')
             val languagePrefix = uri.first()
             if (languagePrefix.matches(i18n.supportedPathPrefixes)) {
-                locale = Locale.forLanguageTag(languagePrefix)
-                if (i18n.useOfCookie && languagePrefix != localeCookie) createCooke(locale)
+                val locale = Locale.forLanguageTag(languagePrefix)
+                if (i18n.useOfCookie && languagePrefix != readCookie())
+                    writeCookie(locale)
+                return@locale locale
             }
         }
 
-        if (i18n.useOfCookie && localeCookie == null) createCooke(locale)
+        if (i18n.useOfCookie) {
+            val cookieLocale = readCookie()
+            if (cookieLocale != null) {
+                return@locale Locale.forLanguageTag(cookieLocale)
+            }
+        }
 
-        locale
+        val acceptLocales = request.acceptLanguage()
+        val ranges = if (acceptLocales != null) Locale.LanguageRange.parse(acceptLocales) else listOf()
+        val locale = Locale.filter(ranges, i18n.supportedLocales).firstOrNull()
+            ?: Locale.lookup(ranges, i18n.supportedLocales)
+            ?: i18n.defaultLocale
+
+        if (i18n.useOfCookie)
+            writeCookie(locale)
+
+        return@locale locale
     }
 
 /**

@@ -128,6 +128,18 @@ The key generator could be any iterable that produces strings, so you can custom
 
 ### Contribution
 
+#### Development
+
+To run the tests:
+```
+./gradlew test
+```
+
+To run the formatter:
+```
+./gradlew spotlessApply
+```
+
 #### Issues
 
 If you encounter any issues with this feature, let us know by opening a new issue with the issue description.

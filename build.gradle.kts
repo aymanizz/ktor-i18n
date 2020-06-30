@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") version "1.3.70"
     maven
     id("org.jetbrains.dokka") version "0.10.1"
-    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
+    id("com.diffplug.gradle.spotless") version "4.4.0"
 }
 
 group = "com.github.aymanizz"
@@ -32,9 +32,29 @@ tasks.test {
     useJUnitPlatform()
 }
 
-ktlint {
-    version.set("0.37.2")
-    enableExperimentalRules.set(true)
+spotless {
+    format("misc") {
+        target("*.gradle", "**/*.md", "**/.gitignore")
+
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
+
+    val ktlintUserData = mapOf(
+        "indent_size" to "4", "continuation_indent_size" to "4", "enableExperimentalRules" to "true"
+    )
+
+    kotlin {
+        ktlint("0.37.2").apply {
+            userData(ktlintUserData)
+        }
+    }
+    kotlinGradle {
+        ktlint("0.37.2").apply {
+            userData(ktlintUserData)
+        }
+    }
 }
 
 tasks {

@@ -21,7 +21,6 @@ import kotlin.collections.ArrayList
  * @see Configuration for how to configure this feature
  */
 class I18n private constructor(configuration: Configuration) : MessageResolver by configuration.messageResolver {
-
     val supportedLocales = configuration.supportedLocales
 
     val defaultLocale = configuration.defaultLocale ?: supportedLocales.first()
@@ -63,7 +62,6 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
      * @see MessageResolver
      */
     class Configuration {
-
         lateinit var supportedLocales: List<Locale>
 
         var defaultLocale: Locale? = null

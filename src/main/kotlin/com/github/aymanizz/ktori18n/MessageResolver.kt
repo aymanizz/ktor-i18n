@@ -3,7 +3,7 @@ package com.github.aymanizz.ktori18n
 import org.jetbrains.annotations.PropertyKey
 import java.text.Format
 import java.text.MessageFormat
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -37,8 +37,8 @@ typealias KeyGenerator = Iterable<String>
  *  assuming the delimiter is `"."`
  */
 abstract class DelimitedKeyGenerator(
-        private vararg val components: String?,
-        private val delimiter: String = "."
+    private vararg val components: String?,
+    private val delimiter: String = "."
 ) : KeyGenerator {
     override fun iterator() = iterator {
         val components = components.filterNotNull()
@@ -60,9 +60,9 @@ const val DEFAULT_RESOURCE_BUNDLE = "i18n.Messages"
  * @param count The second component of the key, semantically this is the number of items.
  */
 class R(
-        @PropertyKey(resourceBundle = DEFAULT_RESOURCE_BUNDLE)
-        baseKey: String,
-        count: Int? = null
+    @PropertyKey(resourceBundle = DEFAULT_RESOURCE_BUNDLE)
+    baseKey: String,
+    count: Int? = null
 ) : DelimitedKeyGenerator(baseKey, count?.toString())
 
 private typealias FormatCacheKey = Pair<String, Locale>
@@ -84,24 +84,26 @@ private typealias FormatCacheKey = Pair<String, Locale>
  * @see MessageFormat for the formatting semantics.
  */
 open class ResourceBundleMessageResolver(
-        /** The base name for the resource bundle */
-        private val baseName: String = DEFAULT_RESOURCE_BUNDLE,
-        /** The resource bundle control. */
-        private val control: ResourceBundle.Control = UTF8Control()
+    /** The base name for the resource bundle */
+    private val baseName: String = DEFAULT_RESOURCE_BUNDLE,
+    /** The resource bundle control. */
+    private val control: ResourceBundle.Control = UTF8Control()
 ) : MessageResolver {
     private val formats = ConcurrentHashMap<FormatCacheKey, Format>()
 
     final override fun t(locale: Locale, keyGenerator: KeyGenerator, vararg args: Any): String {
         var exception: MissingResourceException? = null
-        if (!keyGenerator.iterator().hasNext())
+        if (!keyGenerator.iterator().hasNext()) {
             throw IllegalStateException("at least one key must be present")
+        }
 
         for (key in keyGenerator) {
             try {
                 return translate(locale, key, *args)
             } catch (e: MissingResourceException) {
-                if (exception == null)
+                if (exception == null) {
                     exception = e
+                }
             }
         }
         throw exception!!
@@ -111,7 +113,7 @@ open class ResourceBundleMessageResolver(
      * Gets the resource bundle used for resolving the message
      */
     protected open fun getBundle(locale: Locale): ResourceBundle =
-            ResourceBundle.getBundle(baseName, locale, control)
+        ResourceBundle.getBundle(baseName, locale, control)
 
     /**
      * Gets the format instance used for formatting messages
@@ -119,7 +121,7 @@ open class ResourceBundleMessageResolver(
      * The [Format] instances returned from this function are cached.
      */
     protected open fun getMessageFormat(format: String, locale: Locale): Format =
-            MessageFormat(format, locale)
+        MessageFormat(format, locale)
 
     private fun translate(locale: Locale, key: String, vararg args: Any): String {
         val bundle = getBundle(locale)

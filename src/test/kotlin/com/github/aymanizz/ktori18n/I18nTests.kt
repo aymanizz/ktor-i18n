@@ -4,7 +4,7 @@ import io.ktor.application.install
 import io.ktor.server.testing.withTestApplication
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.*
+import java.util.Locale
 import kotlin.test.assertEquals
 
 internal class I18nTests {

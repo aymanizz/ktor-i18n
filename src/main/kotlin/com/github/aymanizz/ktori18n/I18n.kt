@@ -12,7 +12,8 @@ import io.ktor.request.acceptLanguage
 import io.ktor.response.respondRedirect
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
-import java.util.*
+import java.util.Locale
+import kotlin.collections.ArrayList
 
 /**
  * Internationalization support feature for Ktor.
@@ -22,12 +23,15 @@ import java.util.*
 class I18n private constructor(configuration: Configuration) : MessageResolver by configuration.messageResolver {
 
     val supportedLocales = configuration.supportedLocales
+
     val defaultLocale = configuration.defaultLocale ?: supportedLocales.first()
 
     val useOfCookie = configuration.useOfCookie
+
     val localeCookieName = configuration.cookieName
 
     val useOfRedirection = configuration.useOfRedirection
+
     val supportedPathPrefixes = "(${supportedLocales.joinToString("|", transform = { it.language })})".toRegex()
 
     val excludePredicates: List<(ApplicationCall) -> Boolean> = configuration.excludePredicates.toList()
@@ -61,10 +65,13 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
     class Configuration {
 
         lateinit var supportedLocales: List<Locale>
+
         var defaultLocale: Locale? = null
+
         var messageResolver: MessageResolver = ResourceBundleMessageResolver()
 
         var useOfCookie: Boolean = false
+
         var cookieName: String = "locale"
 
         var useOfRedirection: Boolean = false
@@ -93,10 +100,9 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
         val call = ctx.context
         val language = call.locale.language
 
-        // todo: maybe using regex would be faster and simpler than working w/ lists
         val uri = call.request.origin.uri.trimStart('/').trimEnd('/').split('/')
-        if (!uri.first().matches(supportedPathPrefixes)
-            && excludePredicates.none { predicate -> predicate(call) }
+        if (!uri.first().matches(supportedPathPrefixes) &&
+            excludePredicates.none { predicate -> predicate(call) }
         ) {
             val toRedirect =
                 mutableListOf<String>(language, *uri.toTypedArray()).joinToString("/", prefix = "/").trimEnd('/')
@@ -156,8 +162,9 @@ val ApplicationCall.locale
             val languagePrefix = uri.first()
             if (languagePrefix.matches(i18n.supportedPathPrefixes)) {
                 val locale = Locale.forLanguageTag(languagePrefix)
-                if (i18n.useOfCookie && languagePrefix != readCookie())
+                if (i18n.useOfCookie && languagePrefix != readCookie()) {
                     writeCookie(locale)
+                }
                 return@locale locale
             }
         }
@@ -175,8 +182,9 @@ val ApplicationCall.locale
             ?: Locale.lookup(ranges, i18n.supportedLocales)
             ?: i18n.defaultLocale
 
-        if (i18n.useOfCookie)
+        if (i18n.useOfCookie) {
             writeCookie(locale)
+        }
 
         return@locale locale
     }

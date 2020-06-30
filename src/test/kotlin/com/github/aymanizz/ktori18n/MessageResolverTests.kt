@@ -1,22 +1,27 @@
 package com.github.aymanizz.ktori18n
 
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.assertThrows
-import java.util.*
+import java.util.Locale
+import java.util.MissingResourceException
 
 internal class RTests {
     @Test
     @Suppress("InvalidBundleOrProperty")
     fun `generates keys correctly`() {
-        assertAll({
-            val r = R("key.subKey", count = 10)
-            assertIterableEquals(listOf("key.subKey.10", "key.subKey"), r)
-        }, {
-            val r = R("key.subKey")
-            assertIterableEquals(listOf("key.subKey"), r)
-        })
+        assertAll(
+            {
+                val r = R("key.subKey", count = 10)
+                assertIterableEquals(listOf("key.subKey.10", "key.subKey"), r)
+            },
+            {
+                val r = R("key.subKey")
+                assertIterableEquals(listOf("key.subKey"), r)
+            }
+        )
     }
 }
 
@@ -39,27 +44,34 @@ internal class ResourceBundleMessageResolverTests {
     @Test
     fun `resolves message for given locale`() {
         val key = listOf("test")
-        assertAll({
-            val message = resolver.t(Locale.forLanguageTag("en"), key)
-            assertEquals("test message", message)
-        }, {
-            val message = resolver.t(Locale.forLanguageTag("ar"), key)
-            assertEquals("رسالة اختبار", message)
-        }, {
-            val message = resolver.t(Locale.forLanguageTag("de"), key)
-            assertEquals("test nachricht", message)
-        })
+        assertAll(
+            {
+                val message = resolver.t(Locale.forLanguageTag("en"), key)
+                assertEquals("test message", message)
+            },
+            {
+                val message = resolver.t(Locale.forLanguageTag("ar"), key)
+                assertEquals("رسالة اختبار", message)
+            },
+            {
+                val message = resolver.t(Locale.forLanguageTag("de"), key)
+                assertEquals("test nachricht", message)
+            }
+        )
     }
 
     @Test
     fun `resolves message for given key`() {
-        assertAll({
-            val message = resolver.t(testLocale, listOf("testKey1"))
-            assertEquals("test key 1", message)
-        }, {
-            val message = resolver.t(testLocale, listOf("testKey2"))
-            assertEquals("test key 2", message)
-        })
+        assertAll(
+            {
+                val message = resolver.t(testLocale, listOf("testKey1"))
+                assertEquals("test key 1", message)
+            },
+            {
+                val message = resolver.t(testLocale, listOf("testKey2"))
+                assertEquals("test key 2", message)
+            }
+        )
     }
 
     @Test

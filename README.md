@@ -140,6 +140,11 @@ To run the formatter:
 ./gradlew spotlessApply
 ```
 
+To run all checks at once:
+```
+./gradlew check
+```
+
 #### Issues
 
 If you encounter any issues with this feature, let us know by opening a new issue with the issue description.

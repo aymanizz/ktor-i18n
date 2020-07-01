@@ -1,3 +1,4 @@
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -23,13 +24,28 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += listOf("-Werror")
-}
+tasks {
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.freeCompilerArgs += listOf("-Werror")
+    }
 
-tasks.test {
-    useJUnitPlatform()
+    test {
+        useJUnitPlatform()
+    }
+
+    getting(DokkaTask::class) {
+        outputFormat = "html"
+        outputDirectory = "$buildDir/javadoc"
+    }
+
+    val dokkaJar by creating(Jar::class) {
+        group = JavaBasePlugin.DOCUMENTATION_GROUP
+        description = "Assembles Kotlin docs with Dokka"
+        archiveClassifier.set("javadoc")
+        from(dokka)
+    }
+    jar.configure { dependsOn(dokkaJar) }
 }
 
 spotless {
@@ -41,25 +57,19 @@ spotless {
         endWithNewline()
     }
 
+    val ktlintVersion = "0.37.2"
     val ktlintUserData = mapOf(
         "indent_size" to "4", "continuation_indent_size" to "4", "enableExperimentalRules" to "true"
     )
 
     kotlin {
-        ktlint("0.37.2").apply {
+        ktlint(ktlintVersion).apply {
             userData(ktlintUserData)
         }
     }
     kotlinGradle {
-        ktlint("0.37.2").apply {
+        ktlint(ktlintVersion).apply {
             userData(ktlintUserData)
         }
-    }
-}
-
-tasks {
-    getting(DokkaTask::class) {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/docs"
     }
 }

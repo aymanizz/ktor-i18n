@@ -24,36 +24,37 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 }
 
-tasks {
-    withType<KotlinCompile>().configureEach {
-        kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.freeCompilerArgs += listOf("-Werror")
-    }
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.freeCompilerArgs += listOf("-Werror")
+}
 
-    test {
-        useJUnitPlatform()
-    }
+tasks.test {
+    useJUnitPlatform()
+}
 
-    val sourcesJar by creating(Jar::class) {
-        description = "Creates a sources jar"
-        archiveClassifier.set("sources")
-        from(sourceSets.main.get().allSource)
-        dependsOn(classes)
-    }
+val sourcesJar by tasks.creating(Jar::class) {
+    description = "Creates a sources jar"
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+    dependsOn(tasks.classes)
+}
 
-    getting(DokkaTask::class) {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/javadoc"
-    }
+tasks.getting(DokkaTask::class) {
+    outputFormat = "html"
+    outputDirectory = "$buildDir/javadoc"
+}
 
-    val dokkaJar by creating(Jar::class) {
-        group = JavaBasePlugin.DOCUMENTATION_GROUP
-        description = "Assembles Kotlin docs with Dokka"
-        archiveClassifier.set("javadoc")
-        from(dokka)
-    }
+val dokkaJar by tasks.creating(Jar::class) {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Assembles Kotlin docs with Dokka"
+    archiveClassifier.set("javadoc")
+    from(tasks.dokka)
+}
 
-    jar.configure { dependsOn(sourcesJar, dokkaJar) }
+artifacts {
+    archives(sourcesJar)
+    archives(dokkaJar)
 }
 
 spotless {

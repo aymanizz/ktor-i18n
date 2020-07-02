@@ -10,6 +10,7 @@ plugins {
 }
 
 group = "com.github.aymanizz"
+version = "1.0.0"
 
 repositories {
     mavenCentral()

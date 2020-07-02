@@ -1,15 +1,16 @@
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.3.70"
-    maven
+    `maven-publish`
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.diffplug.gradle.spotless") version "4.4.0"
 }
 
 group = "com.github.aymanizz"
-version = "0.1.0"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -33,6 +34,20 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.getting(DokkaTask::class) {
+    outputFormat = "html"
+    outputDirectory = "$buildDir/javadoc"
+}
+
+val dokkaJar by tasks.creating(Jar::class) {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Assembles Kotlin docs with Dokka"
+    archiveClassifier.set("javadoc")
+    from(tasks.dokka)
+}
+
+java.withSourcesJar()
+
 spotless {
     format("misc") {
         target("*.gradle", "**/*.md", "**/.gitignore")
@@ -42,25 +57,28 @@ spotless {
         endWithNewline()
     }
 
+    val ktlintVersion = "0.37.2"
     val ktlintUserData = mapOf(
         "indent_size" to "4", "continuation_indent_size" to "4", "enableExperimentalRules" to "true"
     )
 
     kotlin {
-        ktlint("0.37.2").apply {
+        ktlint(ktlintVersion).apply {
             userData(ktlintUserData)
         }
     }
     kotlinGradle {
-        ktlint("0.37.2").apply {
+        ktlint(ktlintVersion).apply {
             userData(ktlintUserData)
         }
     }
 }
 
-tasks {
-    getting(DokkaTask::class) {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/docs"
+publishing {
+    publications {
+        create<MavenPublication>("ktor-i18n") {
+            from(components["java"])
+            artifact(dokkaJar)
+        }
     }
 }

@@ -34,6 +34,13 @@ tasks {
         useJUnitPlatform()
     }
 
+    val sourcesJar by creating(Jar::class) {
+        description = "Creates a sources jar"
+        archiveClassifier.set("sources")
+        from(sourceSets.main.get().allSource)
+        dependsOn(classes)
+    }
+
     getting(DokkaTask::class) {
         outputFormat = "html"
         outputDirectory = "$buildDir/javadoc"
@@ -45,7 +52,8 @@ tasks {
         archiveClassifier.set("javadoc")
         from(dokka)
     }
-    jar.configure { dependsOn(dokkaJar) }
+
+    jar.configure { dependsOn(sourcesJar, dokkaJar) }
 }
 
 spotless {

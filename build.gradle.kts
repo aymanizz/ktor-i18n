@@ -34,6 +34,7 @@ tasks.test {
 }
 
 val sourcesJar by tasks.creating(Jar::class) {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
     description = "Creates a sources jar"
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
@@ -79,6 +80,14 @@ spotless {
     kotlinGradle {
         ktlint(ktlintVersion).apply {
             userData(ktlintUserData)
+        }
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("ktor-i18n") {
+            from(components["java"])
         }
     }
 }

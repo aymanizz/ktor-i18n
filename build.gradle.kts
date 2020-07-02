@@ -34,14 +34,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-val sourcesJar by tasks.creating(Jar::class) {
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    description = "Creates a sources jar"
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-    dependsOn(tasks.classes)
-}
-
 tasks.getting(DokkaTask::class) {
     outputFormat = "html"
     outputDirectory = "$buildDir/javadoc"
@@ -54,10 +46,7 @@ val dokkaJar by tasks.creating(Jar::class) {
     from(tasks.dokka)
 }
 
-artifacts {
-    archives(sourcesJar)
-    archives(dokkaJar)
-}
+java.withSourcesJar()
 
 spotless {
     format("misc") {
@@ -89,6 +78,7 @@ publishing {
     publications {
         create<MavenPublication>("ktor-i18n") {
             from(components["java"])
+            artifact(dokkaJar)
         }
     }
 }

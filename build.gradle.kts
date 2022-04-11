@@ -1,27 +1,22 @@
-import org.gradle.jvm.tasks.Jar
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.70"
+    kotlin("jvm") version "1.6.20"
     `maven-publish`
-    id("org.jetbrains.dokka") version "0.10.1"
-    id("com.diffplug.gradle.spotless") version "4.4.0"
+    id("com.diffplug.spotless") version "6.4.2"
 }
 
 group = "com.github.aymanizz"
-version = "1.0.0"
+version = "2.0.0"
 
 repositories {
     mavenCentral()
-    maven("https://dl.bintray.com/kotlin/ktor")
-    maven("https://dl.bintray.com/kotlin/dokka")
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.ktor:ktor-server-core:1.3.1")
-    testImplementation("io.ktor:ktor-server-test-host:1.3.1")
+    implementation("io.ktor:ktor-server-core:2.0.0")
+    testImplementation("io.ktor:ktor-server-test-host:2.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 }
 
@@ -32,18 +27,6 @@ tasks.withType<KotlinCompile>().configureEach {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-tasks.getting(DokkaTask::class) {
-    outputFormat = "html"
-    outputDirectory = "$buildDir/javadoc"
-}
-
-val dokkaJar by tasks.creating(Jar::class) {
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    description = "Assembles Kotlin docs with Dokka"
-    archiveClassifier.set("javadoc")
-    from(tasks.dokka)
 }
 
 java.withSourcesJar()
@@ -78,7 +61,6 @@ publishing {
     publications {
         create<MavenPublication>("ktor-i18n") {
             from(components["java"])
-            artifact(dokkaJar)
         }
     }
 }

@@ -1,15 +1,16 @@
 package com.github.aymanizz.ktori18n
 
 import com.github.aymanizz.ktori18n.I18n.Configuration
-import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
-import io.ktor.application.ApplicationCallPipeline
-import io.ktor.application.ApplicationFeature
-import io.ktor.application.feature
-import io.ktor.features.origin
 import io.ktor.http.Cookie
-import io.ktor.request.acceptLanguage
-import io.ktor.response.respondRedirect
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.ApplicationCallPipeline
+import io.ktor.server.application.ApplicationCallPipeline.ApplicationPhase.Plugins
+import io.ktor.server.application.BaseApplicationPlugin
+import io.ktor.server.application.plugin
+import io.ktor.server.plugins.origin
+import io.ktor.server.request.acceptLanguage
+import io.ktor.server.response.respondRedirect
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelineContext
 import java.util.Locale
@@ -109,7 +110,7 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
         }
     }
 
-    companion object Feature : ApplicationFeature<ApplicationCallPipeline, Configuration, I18n> {
+    companion object Plugin : BaseApplicationPlugin<ApplicationCallPipeline, Configuration, I18n> {
 
         override val key = AttributeKey<I18n>("I18n")
 
@@ -124,7 +125,7 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
             val feature = I18n(configuration)
 
             if (configuration.useOfRedirection) {
-                pipeline.intercept(ApplicationCallPipeline.Features) { feature.intercept(this) }
+                pipeline.intercept(Plugins) { feature.intercept(this) }
             }
 
             return feature
@@ -133,7 +134,7 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
 }
 
 val Application.i18n
-    get() = feature(I18n)
+    get() = this.plugin(I18n)
 
 private val CallLocaleKey = AttributeKey<Locale>("CallLocale")
 

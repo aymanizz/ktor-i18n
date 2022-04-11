@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.aymanizz:ktor-i18n:1.0.0'
+    implementation 'com.github.aymanizz:ktor-i18n:2.0.0'
 }
 ```
 

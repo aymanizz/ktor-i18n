@@ -17,7 +17,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-core:2.0.0")
     testImplementation("io.ktor:ktor-server-test-host:2.0.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.20")
 }
 
 tasks.withType<KotlinCompile>().configureEach {

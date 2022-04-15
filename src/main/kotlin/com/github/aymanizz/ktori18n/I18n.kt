@@ -122,13 +122,13 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
                 }
             }
 
-            val feature = I18n(configuration)
+            val plugin = I18n(configuration)
 
             if (configuration.useOfRedirection) {
-                pipeline.intercept(Plugins) { feature.intercept(this) }
+                pipeline.intercept(Plugins) { plugin.intercept(this) }
             }
 
-            return feature
+            return plugin
         }
     }
 }

@@ -19,9 +19,12 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.aymanizz:ktor-i18n:1.0.0'
+    implementation 'com.github.aymanizz:ktor-i18n:VERSION'
 }
 ```
+where "VERSION" is dependent on the ktor version you are using.
+If you are using ktor 2.0.0 or newer, use version 2.0.0.
+If you are using older ktor versions, use version 1.0.0.
 
 #### Usage Example
 

@@ -142,7 +142,7 @@ private val CallLocaleKey = AttributeKey<Locale>("CallLocale")
  * The locale for the current call, based on accept language header, then from the optional language cookie and finally from
  * the language prefix of the request path.
  *
- * If there is no supported locale that matches the request accept language locales, the the default locale is returned.
+ * If there is no supported locale that matches the request accept language locales, the default locale is returned.
  */
 val ApplicationCall.locale
     get() = attributes.computeIfAbsent(CallLocaleKey) locale@{

@@ -88,7 +88,7 @@ class I18n private constructor(configuration: Configuration) : MessageResolver b
 
         /**
          * Exclude calls matching the [predicate] from being redirected with language prefix by this feature.
-         * @see io.ktor.features.HttpsRedirect for example of exclusions
+         * @see io.ktor.server.plugins.httpsredirect for example of exclusions
          */
         fun exclude(predicate: (call: ApplicationCall) -> Boolean) {
             excludePredicates.add(predicate)

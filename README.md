@@ -131,7 +131,7 @@ The key generator could be any iterable that produces strings, so you can custom
 
 #### Usage with FreeMaker
 
-You can use this plugin along with the [ktor-freemaker-i18n](https://github.com/nathanfallet/ktor-freemarker-i18n) plugin developed by [Nathan Fallet](https://github.com/nathanfallet).
+You can use this plugin along with the [ktorx:ktor-i18n-freemarker](https://github.com/nathanfallet/ktorx) plugin developed by [Nathan Fallet](https://github.com/nathanfallet).
 
 ### Contribution
 
